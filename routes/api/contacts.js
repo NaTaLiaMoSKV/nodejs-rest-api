@@ -10,7 +10,7 @@ router.get('/', ctrl.getAllContacts)
 
 router.get('/:contactId', isValidId, ctrl.getContactById)
 
-router.post('/', ctrl.addContact)
+router.post('/', validateBody(schemas.addSchema), ctrl.addContact)
 
 router.delete('/:contactId', isValidId, ctrl.deleteContactById)
 
