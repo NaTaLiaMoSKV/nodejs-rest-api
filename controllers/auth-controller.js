@@ -19,8 +19,8 @@ const register = async (req, res, next) => {
 
     res.status(201).json({
         user: {
-            email: result.email,
-            subscription: result.subscription
+            email: newUser.email,
+            subscription: newUser.subscription
         }
     })
 }
@@ -39,8 +39,6 @@ const login = async (req, res, next) => {
         throw HttpError(401, 'Email or password is wrong');
     }
 
-    // const token = 'dfgtyhju.rghyujik.fvbnhmjikol';
-
     const payload = {
         id: user.id,
         password: user.password,
@@ -49,6 +47,7 @@ const login = async (req, res, next) => {
     }
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '23h' });
+    await User.findByIdAndUpdate(user._id, { token });
 
     res.status(200).json({
        token: token,
@@ -59,7 +58,51 @@ const login = async (req, res, next) => {
     })
 }
 
+const getCurrent = async (req, res, next) => {
+    const { email, subscription } = req.user;
+
+    res.status(200).json({
+        email,
+        subscription
+    })
+}
+
+const logout = async (req, res, next) => {
+    const { _id } = req.user;
+    const user = await User.findByIdAndUpdate(_id, { token: '' });
+
+    if (!user) {
+        throw HttpError(401, 'Not authorized');
+    }
+
+    res.status(204).json({
+        message: "Logout success"
+    })
+
+}
+
+
+const updateSubscription = async (req, res, next) => {
+    const { userId } = req.params;
+
+    if (!req.body) {
+        throw HttpError(400, 'missing field subscription');
+    }
+
+    const user = await User.findByIdAndUpdate(userId, req.body, { new: true });
+
+    if (!user) {
+        throw HttpError(404);
+    }
+
+    res.status(200).json(user);
+
+}
+
 module.exports = {
     register: ctrlWrapper(register),
     login: ctrlWrapper(login),
+    getCurrent: ctrlWrapper(getCurrent),
+    logout: ctrlWrapper(logout),
+    updateSubscription: ctrlWrapper(updateSubscription),
 }
