@@ -2,7 +2,7 @@ const { HttpError } = require('../helpers');
 const { ctrlWrapper } = require('../helpers');
 const { Contact } = require('../models/contact');
 
-const getAllContacts = async (req, res, next) => {
+const getAllContacts = async (req, res) => {
     const { _id: owner } = req.user;
     const { page = 1, limit = 10, favorite } = req.query;
     const skip = (page - 1) * limit;
@@ -11,7 +11,7 @@ const getAllContacts = async (req, res, next) => {
     res.status(200).json(result);
 };
 
-const getContactById = async (req, res, next) => {
+const getContactById = async (req, res) => {
     const { contactId } = req.params;
     const result = await Contact.findById(contactId);
 
@@ -22,13 +22,13 @@ const getContactById = async (req, res, next) => {
     res.status(200).json(result);
 };
 
-const addContact = async (req, res, next) => {
+const addContact = async (req, res) => {
     const { _id: owner } = req.user;
     const result = await Contact.create({...req.body, owner});
     res.status(201).json(result);
 };
 
-const deleteContactById = async (req, res, next) => {
+const deleteContactById = async (req, res) => {
     const { contactId } = req.params;
     const result = await Contact.findByIdAndRemove(contactId);
 
@@ -41,7 +41,7 @@ const deleteContactById = async (req, res, next) => {
     });
 };
 
-const updateContactById = async (req, res, next) => {
+const updateContactById = async (req, res) => {
     const { contactId } = req.params;
     const result = await Contact.findByIdAndUpdate(contactId, req.body, { new: true });
 
@@ -52,7 +52,7 @@ const updateContactById = async (req, res, next) => {
     res.status(200).json(result);
 };
 
-const updateStatusContact = async (req, res, next) => {
+const updateStatusContact = async (req, res) => {
     const { contactId } = req.params;
 
     if (!req.body) {
