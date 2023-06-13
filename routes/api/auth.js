@@ -19,6 +19,6 @@ router.patch('/:userId/subscription', authenticate, validateBody(schemas.updateS
 
 router.patch('/avatars', authenticate, upload.single('avatarURL'), ctrl.updateAvatar);
 
-router.post('/verify/', validateBody(schemas.emailSchema), ctrl.resendVerifyEmail);
+router.post('/verify', validateBody(schemas.emailSchema), ctrl.resendVerifyEmail);
 
 module.exports = router;
